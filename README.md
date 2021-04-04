@@ -16,7 +16,10 @@ With this, we dive into some basic concepts of Statistics.
 CENTRAL TENDENCY: When we have a set of observations for any random variable, the initial and most intuitive step is to determine its central tendency. The measure of central tendency often provides the first step towards understanding the characteristics of the random variable. Averages in sport are a prime example of this concept. The quality of a player is reflected by the average. It mostly serves as a first tool to differentiate between different players. There are three measures of central tendencies.
 
   1) Mean: This is the arithmatic mean or average as we know it - the sum of all observations divided by the number of observations.
-  2) Median: 
+  2) Median: This is the middle value when the observations are arranged in ascending order.
+  3) Mode: This is the most frequent observation.
 
-![Stats_flowchart](https://user-images.githubusercontent.com/57030840/113517616-57208180-9581-11eb-824a-c24ed66f44bc.png)
+
+
+
 
