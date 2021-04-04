@@ -10,3 +10,13 @@ The most simple way to understand the crux of Statistics is with the following a
 This analogy provides two other key insights into how Statistics works. The first of these is pertaining to the data. The quality of the glass of juice depends on the quality of the Oranges. Similarly, the result of any Statistical analysis is heavily dependent on the quality of the data. High quality data makes it possible to obtain high quality results. To anticipate good results from poor quality data is a fool's errand.
 
 The other insight is relevant to the algorithm. Let us suppose we want a glass of Sugarcane juice instead. It would be foolish to put the Sugarcane into a juicer. The machinery required to extract juice from Sugarcane is entirely different from that of Oranges. Similarly, based on the requirement, the right Statistical machinery must be deployed to obtain the desired results. There is no one size fits all.
+
+With this, we dive into some basic concepts of Statistics.
+
+CENTRAL TENDENCY: When we have a set of observations for any random variable, the initial and most intuitive step is to determine its central tendency. The measure of central tendency often provides the first step towards understanding the characteristics of the random variable. Averages in sport are a prime example of this concept. The quality of a player is reflected by the average. It mostly serves as a first tool to differentiate between different players. There are three measures of central tendencies.
+
+  1) Mean: This is the arithmatic mean or average as we know it - the sum of all observations divided by the number of observations.
+  2) Median: 
+
+![Stats_flowchart](https://user-images.githubusercontent.com/57030840/113517616-57208180-9581-11eb-824a-c24ed66f44bc.png)
+
