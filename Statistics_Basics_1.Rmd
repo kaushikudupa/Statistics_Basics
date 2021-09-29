@@ -1,0 +1,154 @@
+---
+title: "Statistics Basics 1"
+output: html_document
+runtime: shiny
+---
+
+### Why Statistics?
+
+The need for development of Statistics as a discipline of study stems from our curiosity to understand the world around us. Without our knowledge, we make use of Statistics to navigate through situations in our lives. We develop an understanding of the world by observation. This involves paying attention to the subject of observation, scrutinise its behaviour, monitor its progress over time, and identify the patterns. These patterns standout only when there is innate randomness in the behaviour of the subject. Randomness is the background against which the patterns standout. Through various procedures, Statistics tries to differentiates the patterns (signals) from the randomness (noise). 
+
+The most simple way to understand the crux of Statistics is with the following analogy. Let us suppose you want to have a glass of Orange juice. The procedure to obtain this is to take a few Oranges, put it in a juicer, and voilà - there's your glass of Orange juice. The raw material is turned into desired output by subjecting it to a certain process. Statistics also follows the same format. In Statistics, data is the Oranges, algorithm is the juicer, and models, estimates, etc (or other desired outputs) is the glass of juice.
+
+This analogy provides two key insights into how Statistics works. The first of these is pertaining to the data. The quality of the glass of juice depends on the quality of the Oranges. Similarly, the result of any Statistical analysis is heavily dependent on the quality of the data. High quality data makes it possible to obtain high quality results. To expect good results from poor quality data is a fool's errand.
+
+The other insight is relevant to the algorithm. Let us suppose we want a glass of Sugarcane juice instead. It would be foolish to put the Sugarcane into a juicer. The machinery required to extract juice from Sugarcane is entirely different from that of Oranges. Similarly, based on the requirement, the right Statistical machinery must be deployed to obtain the desired results. There is no one size fits all.
+
+With this, we dive into some basic concepts of Statistics. 
+
+#### T - TESTS:
+
+This is the basic building block of most of the common-place Statistics around us. What the t-test does is it provides us with a number that can conveys a bold message - **given our understanding of how this process works, what is the probability of getting this observation?** From this, it must be clear that we need to two things to carry out a t-test:
+
+1. **A null hypothesis** - our understanding of the process we are interested in
+2. **A test statistics** - a number that represents the actual, real-world behaviour of the process we are interested in
+
+Let us explore this with a simple example:
+Suppose you are in the mango business. You are interested in finding out the average weight of a mango. From your years of experience in the industry, you believe that the average weight of a mango is around 80 grams. But like all sensible people, you want to know the validity of your beliefs. So you decide to pick up a few mangos and measure their weights yourself. What you get by this exercise can be concisely put in one number - the average of all the measurements.
+
+At this point, you have two things to compare. On the one hand, you have your belief about the average weight of mangoes. On the other, you have the measured values that are averaged down to a single number. This is where t-tests can be deployed to check the validity of your beliefs. **It tests the consistency of our belief of the world with the reality of the world.** Our belief is that the average weight of mangoes is 80 grams, and against it is the actual average weight from real world **instances**. Instances because we have only taken a few samples and are trying to extrapolate that characteristic to the entire population. So the representation of the reality of the world through that single number is probabilistic - it depends on the samples. The larger the number of samples in the exercise, the more representative the sample is of the entire population. This is called the **Law of Large Numbers.**
+
+**NOTE**: Throughout this document, we assume that the null hypothesis, out belief of the average weight of mangoes is **normally distributed with mean 80 and standard deviation 20**.
+
+####### **Exercise**
+
+Below, you can try out this example for yourself and understand the utility of a t-test. There are multiple variations of this test but for our purposes, we stick to the most basic one. From the slider below, pick a sample size. 
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+# Get libraries
+library(ggplot2)
+library(dplyr)
+
+# Get samples
+get_samples <- function(sample_size) {
+  rnorm(sample_size,rnorm(1,100,10),20)
+}
+
+shinyUI(fluidPage(
+  #titlePanel('T - TEST'),
+  
+  sidebarPanel(
+    sliderInput('size','Select sample size',min=10,max=1000,value=30)
+  ),
+  
+  mainPanel(
+    renderPlot({
+      set.seed(1234)
+      s <- get_samples(input$size)
+      hist(s,breaks=input$size,
+                    main='Histogram of sample weights',xlab='Weights')
+      abline(v=mean(s),col='red',lwd = 2)
+      abline(v=80,col='green',lwd = 2)
+      legend('topright',legend=c('Mean weight','Belief'),lty=1,col=c('red','green'))
+    }
+    ),
+    
+    renderText({
+      set.seed(1234)
+      s <- get_samples(input$size)
+      paste('The probability that the sample mean of size', input$size, 'is', round(mean(s),2),
+            'with the belief that the actual mean is 80 is', round(dnorm(mean(s),80,20),4),
+            'and is called the p-value.')
+    })
+    )
+))
+```
+
+#### P VALUE:
+
+The interpretation of the p value gives the best of us the worst of nightmares. P value is the **distilled extract of a Statistical test.** In the case of the above t-test, we saw that the end product was a single number that represented the probability of observing the event (samples with certain mean), given certain preconceptions about the process (the null hypothesis).
+
+Going back to the above example, if we were right in our null hypothesis (the average weight of mangoes is 80 grams), then we would expect the p value to be high, i.e, we would see samples consistent with a mean of 80. If the sample mean is different than 80, then we have reason to suspect that we must be erring in our null hypothesis. If the probability of getting this particular sample mean is less than 5% (0.05), then the common practice in Statistics is to reject the null hypothesis. 
+
+Because of this, all problems are statistically set up to reject the null hypothesis. You make assumptions about the behaviour of certain processes in the real world and disprove these assumptions. If the p values are above 0.05, then we say that there is no sufficient evidence to reject the null hypothesis. 
+
+#### EFFECT SIZE:
+
+The effect size can represent different things in different contexts. The essense of the effect size in the context of a t-test is the difference between the real-world measurement or *statistic* and the null hypothesis. For a given sample size, as the effect size increases, the p value decreases. This indicates that the current sample mean is possible with very low probability and that we must reconsider our null hypothesis.
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+shinyUI(fluidPage(
+  sidebarPanel(
+    sliderInput('effect_size','Enter the effect size',min=0,max=50,value=10),
+    selectInput('sign','Enter sign of effect size',c('Positive','Negative'))
+  ),
+  
+  mainPanel(
+    renderPlot({
+      m <- NULL
+      if (input$sign == 'Positive') 
+        m <- -1
+      else 
+        m <- 1
+      s <- rnorm(100,80-input$effect_size*m,20)
+      plot(density(s),main='Effect size comparison',xlab='Means',ylab='',yaxt='n')
+      abline(v=mean(s),col='red',lwd=2)
+      abline(v=80,col='green',lwd=2)
+      legend('topright',legend=c('Mean weight','Belief'),lty=1,col=c('red','green'))
+    })
+  )
+))
+```
+
+#### POWER OF A TEST:
+
+Power of a test is the ability of the test to **discriminate between the truth and untruth**. It is the ability of the test to correctly reject the null hypothesis. Suppose that the null hypothesis about the average weight of the mangoes being 80 is wrong. In order to find this out, we must test this hypothesis. If the effect size (difference between the *statistic* and the null hypothesis) is large, the test must be able to make this distinction very easily. However, if the effect size is small, say 5 grams, the distiction becomes hard to make. Therefore, the power of a test depends on the combination of effect size and the sample size. A larger sample size would be a better representation of the reality. If the *statistic* is backed by a large sample size, it gives more confidence about the decision we take. 
+
+Let us consider two simple situations. First, suppose the average weight from the measurement of 20 mangoes turns out to be 68. Second, you decide to measure a 100 mangoes and the average measurement is 73. Which one are more sure about? Naturally, it is the second measurement simply because the sample size is bigger and more representative of the population. However, we must be careful about the sample selection as well. But that is beyond the scope of this document. 
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+get_power_plot <- function(eff_size, samp_size) {
+  print('Set up done')
+  mu1 <- 80
+  sd1 <- 2
+  s <- seq(-25,25,1)
+  p <- NULL
+  k <- 100    # Number of replicates
+  alpha <- 0.05 # Type 1 error level
+  
+  for (i in 1:length(s)) {
+    p <- rbind(p, mean(replicate(k,t.test(rnorm(samp_size,mu1,sd1),rnorm(samp_size,mu1+s[i],sd1))$p.value) < alpha))
+  }
+  
+  plot(mu1+s, p, main = 'Power - possibility of rejecting H0', type = 'l', col='black',
+       xlab = 'Mean', ylab = 'Power')
+  abline(v=mu1,col='black',lty=2)
+  abline(v=mu1+eff_size,col='red')
+  legend('bottomright',legend = c('Null Hypothesis','Statistic'),col=c('black','red'),lty=c(2,1))
+}
+
+shinyUI(fluidPage(
+  
+  sidebarPanel(
+    sliderInput('effect_size2','Enter effect size',min=-25,max=25,value=10),
+    sliderInput('sample_size2','Enter the sample size',min=1,max=50,value=5)
+  ),
+  
+  mainPanel(
+    renderPlot({
+      get_power_plot(input$effect_size2,input$sample_size2)
+    })
+  )
+))
+```
+
